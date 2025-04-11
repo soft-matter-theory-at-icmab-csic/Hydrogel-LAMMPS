@@ -1,0 +1,147 @@
+##aone example of polymer nanocomposites
+units                           lj
+atom_style                      full
+boundary                        p p p
+
+
+
+##read_data                       minimized.data 
+read_restart                    ../melt_cesga-5-param/restart.25000000
+
+#bond_style                      fene
+#special_bonds                   fene
+#bond_coeff                      1*3 30.0 1.5 1.0 1.0
+#bond_coeff                      4*5 30.0 2.1 1.0 1.4
+
+bond_style                       harmonic
+bond_coeff                       1*3 30.0 1.0
+bond_coeff                       4*5 30.0 1.4
+
+
+#bond_style                      harmonic
+#bond_coeff                      1*3 30.0 1.0
+#bond_coeff                      4*5 30.0 1.4
+
+
+angle_style                     harmonic
+angle_coeff                     1 10.0 130.0
+angle_coeff                     2 10.0 109.5
+angle_coeff                     3 10.0 130.0
+angle_coeff                     4 10.0 130.0
+angle_coeff                     5*7 10.0 140.0
+ 
+#dihedral_style                  harmonic
+#dihedral_coeff                  1*6 10.0 1 2
+
+dihedral_style                  multi/harmonic
+dihedral_coeff                  1*6 0.2 0.2 0.2 0.2 0.2
+
+#pair_style soft 2.50
+
+#pair_style                      lj/cut 1.12
+#pair_modify                     shift yes
+
+group                           knot type 1
+group				peg type 2
+group                           termini type 3
+group                           glc-ido type 4
+group				ido_mal type 5
+#group                           covalent_bond type 3 5
+
+
+fix                             1 all nve
+fix                             2 all langevin 1.0 1.0 1 69923
+
+thermo                          100
+timestep                        0.005
+#compute                         1 all pressure thermo_temp
+thermo_style                    custom step temp press etotal enthalpy epair pxy pxz pyz
+
+variable peg equal 0.42
+#variable covalent equal 10.0
+
+#########################
+##Compute bond formation
+#########################
+
+#compute 3_5_dist covalent_bond pair/local dist
+#variable bond_dist equal c_3_5_dist[1]
+#variable bond_count equal count(3_5_dist)
+
+#variable bond_cutoff equal 1.5
+
+##variable rho equal 1.0/9.0
+
+#pair_style soft 3.5
+#pair_coeff   *   *  10.0  1.12
+#variable prefactor equal ramp(0,100)
+#fix 3 all adapt 1 pair soft a * * v_prefactor 
+#run                             10000000
+
+#unfix 3
+
+
+
+# Attempting a new set of potentials- no table function errors!
+if "${peg} > 0.0" then "pair_style hybrid/overlay lj/cut 1.12 lj/cut 2.5 coul/debye 0.42 3.5" else "pair_style hybrid lj/cut 1.12"
+
+comm_modify mode single cutoff 8.0
+pair_modify			shift yes
+
+###pair_coeff * * 1.3
+
+pair_coeff * * lj/cut 1 1.0 1.0 1.12
+pair_coeff 1 4 lj/cut 1 1.0 1.2 1.347
+pair_coeff 1 5 lj/cut 1 1.0 1.2 1.347
+pair_coeff 2 4 lj/cut 1 1.0 1.2 1.347
+pair_coeff 2 5 lj/cut 1 1.0 1.2 1.347
+pair_coeff 3 4 lj/cut 1 1.0 1.2 1.347
+pair_coeff 3 5 lj/cut 1 1.0 1.2 1.347
+
+################
+##Non-bonded PEG
+################
+pair_coeff 1 1 lj/cut 2 ${peg} 1.0 2.5
+pair_coeff 1 2 lj/cut 2 ${peg} 1.0 2.5
+pair_coeff 2 2 lj/cut 2 ${peg} 1.0 2.5
+
+####################
+##Non-bonded Heparin
+####################
+
+pair_coeff 4 4 coul/debye 3.5
+pair_coeff 4 5 coul/debye 3.5
+pair_coeff 5 5 coul/debye 3.5
+
+
+########################
+##Non-bonded PEG-Heparin
+########################
+
+#pair_coeff 3 5 lj/cut 2 ${covalent} 1.0 2.5
+
+####################################################################################
+##Exclude LJ interaction when "fake covalent" bond between PEG and heparin is formed
+####################################################################################
+
+#variable bond_cutoff equal 1.5
+#pair_modify exclude 3 5 tail yes bond ${bond_dist} v_bond_cutoff
+
+
+#################
+##Dump trajectory
+#################
+dump 11 all atom 100000 PNCsAll-6.lammpstrj
+
+##dump 22 all custom 100000 PNCsAll.im id type ix iy iz
+
+
+restart                        1000000  restart
+##minimize 0 0 10000 100000
+##write_data minimized.data
+
+run			5000000
+
+write_data data_melt-6.equil
+
+
