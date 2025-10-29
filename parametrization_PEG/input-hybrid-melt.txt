@@ -1,8 +1,11 @@
-#aone example of polymer nanocomposites
+#PEG
+
 units                           lj
 atom_style                      full
 boundary                        p p p
 
+#Change here to run the simulation from restart or from data files
+##read_data                       ../minimization/minimized.data 
 read_restart                    ../lj03-dih-ramp/restart.1000000
 
 #bond_style                      fene
