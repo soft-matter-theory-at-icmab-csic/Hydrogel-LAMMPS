@@ -3,6 +3,8 @@
 ## LAMMPS simulations of a single PEG molecule (CG model)
 
 The objective is the parametrization of the PEG model, by changing the $\epsilon$ parameter of the LJ potential and comparing the obtained Rg with the values reported in the literature.
+The employed PEG model has 477 beads (monomers).
+The model is similar to that developed by Lee, de vries, Marrink and Pastor in: [The Journal of Physical Chemistry B 2009 113 (40), 13186-13194](https://pubs.acs.org/doi/10.1021/jp9058966)
 
 The files included here are the following:
 ### PEG coordinates:
