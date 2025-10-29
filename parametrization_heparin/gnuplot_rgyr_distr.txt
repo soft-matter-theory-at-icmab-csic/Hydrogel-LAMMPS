@@ -1,0 +1,36 @@
+set encoding iso_8859_1
+
+#set terminal postscript eps enhanced color font "Arial, 16"
+
+set terminal postscript eps enhanced color "Helvetica, 24"
+
+# The file we'll write to
+set output 'rgyr_distribution.eps'
+set size ratio 0.666
+set xtics scale 2
+set ytics scale 2
+set mxtics 2
+set mytics 2
+#set xrange [0:51]
+set key top right font ",18"
+unset key
+
+set xlabel "Radius of gyration ({/Symbol s})" font ",24" 
+set ylabel "Probability" font ",24" # offset -1,0
+
+
+set linetype 1 lc rgb '#f0c571'
+set linetype 2 lc rgb '#59a89c'
+set linetype 3 lc rgb '#0b81a2'
+set linetype 4 lc rgb '#e25759'
+set linetype 5 lc rgb '#9d2c00'
+set linetype 6 lc rgb '#7E4794'
+set linetype 7 lc rgb '#36b700'
+set linetype 8 lc rgb '#a1a1a1'
+
+
+
+plot 'radius_of_gyration_manual.txt' u 2:(1/1000.) s kdens  bandwidth 0.1 with filledcurves y=0
+
+set terminal x11
+replot
