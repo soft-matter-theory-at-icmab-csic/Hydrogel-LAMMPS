@@ -8,3 +8,7 @@ Structure and input files of the hydrogel model
 - input-hybrid-reaction-lj.txt: LAMMPS input file to run a simulation of the formation of the hydrogel.
 - input-afterreaction.txt: LAMMPS input file to run a simulation after the reaction of the hydrogel has happened.
 - input-shear_stress.txt: LAMMPS input file to run an oscilatory shear simulation of the hydrogel.
+
+These simulations correspond to Chapter 6 of Marc Domingo PhD Thesis:
+https://saco.csic.es/s/w3frrJFQp3DHJEb
+
